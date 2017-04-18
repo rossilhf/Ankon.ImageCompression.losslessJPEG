@@ -10,9 +10,9 @@ buff=''; %用来暂存二进制数据流
 count=1;%计数用
 for i=1:length(JPEGLS_coderoutput2{1})
     buff=strcat(buff,JPEGLS_coderoutput2{1}(i));%每传输一个二进制数，就压入buff
-    for j=length(Errorquant.huffmancode):-1:1%由于码本中越靠后的像素亮度值出现概率越高，所以从后往前找会提高解码效率
+    for j=1:length(Errorquant.huffmancode)
         if strcmp(buff,Errorquant.huffmancode(j))%如果buff内容与码本中某个编码相同
-            Re_Errorquant_1D(count)=Errorquant.luminance(j);%则根据码本将十进制数值放入图像数据（1维排列）中
+            Re_Errorq_1D(count)=Errorquant.luminance(j);%则根据码本将十进制数值放入图像数据（1维排列）中
             count=count+1;
             buff='';%清空buff
             break
@@ -24,16 +24,15 @@ count=1;
 for k=1:3
     for i=2:length(A(:,1,k)) %i表示图像上某像素的行数
         for j=2:length(A(1,:,k)) %j表示图像上某像素的列数
-            Re_Errorquant(i,j,k)=Re_Errorquant_1D(count);%把Re_Errorquant_1D上所有元素转移到上Re_Errorquant上
+            Re_Errorq(i,j,k)=Re_Errorq_1D(count);%把Re_Errorq_1D上所有元素转移到上Re_Errorq上
             count=count+1;%Errorquant_1D是一维数组
         end
     end
 end
-%现在根据量化步长将Re_Errorquant中元素还原成Re_Error元素
-% Re_Error=Re_Errorquant;%量化步长为1
-Re_Error=Re_Errorquant*2;%量化步长为2
-% Re_Error=Re_Errorquant*3;%量化步长为3
-% Re_Error=Re_Errorquant*4;%量化步长为4
+%现在根据量化步长将Re_Errorq中元素还原成Re_Error元素
+Re_Error=Re_Errorq;%量化步长为1
+% Re_Error=Re_Errorq*2;%量化步长为2
+% Re_Error=Re_Errorq*4;%量化步长为4
 
 
 
@@ -56,11 +55,11 @@ end
 count=1;
 for k=1:3
     for j=1:length(A(1,:,k)) %j表示图像上某像素的列数
-        Re_Error(1,j,k)=A1_1D(count);%把原始图像的第一行像素数据存入Re_Error第一行中
+        Re_Error(1,j,k)=Re_A1_1D(count);%把原始图像的第一行像素数据存入Re_Error第一行中
         count=count+1;
     end
     for i=2:length(A(:,1,k))%i表示图像上某像素的行数
-        Re_Error(i,1,k)=A1_1D(count);%把原始图像的第一列像素数据存入Re_Error第一列中
+        Re_Error(i,1,k)=Re_A1_1D(count);%把原始图像的第一列像素数据存入Re_Error第一列中
         count=count+1;
     end
 end
